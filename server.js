@@ -32,6 +32,20 @@ app.get('/todos/:id', function(req, res){
 
 })
 
+app.delete('/todos/:id', function(req, res){
+	var todoId = parseInt(req.params.id, 10);
+	var matchedData = _.findWhere(todos, { id : todoId});
+	
+
+	if(matchedData){
+		todos = _.without(todos, matchedData);
+		res.json(matchedData);
+	} else {
+		res.status(404).json({"error":"no matching data"});
+	}
+
+})
+
 app.post('/todos', function(req, res){
 	var body = req.body;
 	body = _.pick(body, 'description', 'completed');
