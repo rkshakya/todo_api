@@ -58,15 +58,21 @@ app.get('/todos/:id', function(req, res){
 
 app.delete('/todos/:id', function(req, res){
 	var todoId = parseInt(req.params.id, 10);
-	var matchedData = _.findWhere(todos, { id : todoId});
-	
-
-	if(matchedData){
-		todos = _.without(todos, matchedData);
-		res.json(matchedData);
-	} else {
-		res.status(404).json({"error":"no matching data"});
-	}
+	db.todo.destroy({
+		where : {
+			id : todoId
+		}
+	}).then(function(deletedRows){
+		if (deletedRows === 0){
+			res.status(404).json({
+				"error" : "No row found"
+			});
+		} else {
+			res.status(204).send();
+		}
+	}, function(e) {
+		res.status(500).json(e);
+	});	
 
 })
 
